@@ -12,7 +12,7 @@ pub fn threading() {
     // without the need to always declare tpyes explicity. This was the variable can move from
     // the outer scope to inner scope 
 
-    let handle = thread::spawn(|| {
+    let handle = thread::spawn(move || {
         println!("Hello from a thread");
     });
     handle.join().unwrap();
@@ -47,15 +47,45 @@ struct Node {
     prev: Link,
 }
 
-pub fn append(&mut self, value: String) {
-    let new = Rc::new(RefCell::new(Node::new(value)));
-    match self.tail.take() {
-        Some(old) => {
-            old.borrow_mut().next = Some(new.clone());
-            new.borrow_mut().prev = Some(old); 
-        }
-        None => self.head = Some(new.clone());
+// impl Node {
+//     pub fn append(&mut self, value: String) {
+//         let new = Rc::new(RefCell::new(Node::new(value)));
+//         match self.tail.take() {
+//             Some(old) => {
+//                 old.borrow_mut().next = Some(new.clone());
+//                 new.borrow_mut().prev = Some(old); 
+//             }
+//             None => self.head = Some(new.clone()),
         
-    }
-}
+//         }
+//     }
+// }
 
+/* Implementing channels in rust for passing multiple messages into a thread
+or implementing an actor model, the Rust library offers channels. Channels are
+single-conusmer multi-producer queues, that let the caller send messages to
+multiple threads.  Below snippet spawns 10 threads and each thread sends a number
+into the channel, where it will be collected into a vector after the senders
+have finished executing 
+*/
+
+use std::sync::mpsc::{channel, Sender, Receiver};
+
+pub fn channels() {
+    const N: i32 = 10;
+    let (tx, rx): (Sender<i32>, Receiver<i32>) = channel();
+    let handles = (0..N).map(|i| {
+        let _tx = tx.clone();
+        thread::spawn(move || {
+            // don't use the result
+            let _ = _tx.send(i).unwrap();
+        })
+    });
+    // close all threads
+    for h in handles {
+        h.join().unwrap();
+    }
+    // receive N times
+    let numbers: Vec<i32> = (0..N).map(|_| rx.recv().unwrap()).collect();
+    println!("{:?}", numbers);
+}

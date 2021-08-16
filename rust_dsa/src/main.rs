@@ -65,6 +65,7 @@ fn main() {
     conmut::threading();
     let read_str = conmut::Sanitize(String::from("abc def"));
     println!("{:#?}", read_str);
+    conmut::channels();
 }
 
 /* Declarative macros work on patterns and run code if that pattern matches
