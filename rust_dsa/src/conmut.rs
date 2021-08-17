@@ -6,6 +6,10 @@ For ease both these can be considered as concurrency itself
 */
 
 use std::thread;// For threading
+use std::cell::RefCell;
+use std::rc::Rc;
+use std::sync::mpsc::{channel, Sender, Receiver}; 
+use std::sync::{Mutex, Arc}; // Mutual Exclusion and Atomic Reference counterpub fn 
 
 pub fn threading() {
     // the two pipes (||) where the parameters go, akin to a funcion signature's parameters,
@@ -35,8 +39,7 @@ Wrapping a RefCell in an Rc acts as the gatekeeper for having multiple owners, i
 the contents. 
 */
 
-use std::cell::RefCell;
-use std::rc::Rc;
+
 
 type Link = Option<Rc<RefCell<Node>>>;
 
@@ -69,7 +72,7 @@ into the channel, where it will be collected into a vector after the senders
 have finished executing 
 */
 
-use std::sync::mpsc::{channel, Sender, Receiver};
+
 
 pub fn channels() {
     const N: i32 = 10;
@@ -88,4 +91,8 @@ pub fn channels() {
     // receive N times
     let numbers: Vec<i32> = (0..N).map(|_| rx.recv().unwrap()).collect();
     println!("{:?}", numbers);
+}
+
+pub fn shared_state() {
+    let v = Arc::new(Mutex::new(vec![]));
 }
