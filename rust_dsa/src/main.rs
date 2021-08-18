@@ -1,7 +1,10 @@
 mod conmut;
-
+mod memtesting;
 
 use crate::conmut::*;
+use crate::memtesting::*;
+
+use std::mem;
 
 struct Door {
     is_open: bool,
@@ -67,6 +70,11 @@ fn main() {
     println!("{:#?}", read_str);
     conmut::channels();
     conmut::shared_state();
+    println!("{:?}",add(5,4));
+    // Testing memory assigned for the struct
+    println!("{:?}",(mem::size_of::<MyStruct>(), 3*mem::size_of::<u8>()));
+    println!("{:?}",(mem::size_of::<[MyStruct; 2]>(), 3*mem::size_of::<u8>()*2));
+
 }
 
 /* Declarative macros work on patterns and run code if that pattern matches

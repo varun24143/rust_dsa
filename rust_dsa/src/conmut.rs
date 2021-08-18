@@ -107,3 +107,28 @@ pub fn shared_state() {
     }
     println!("{:?}", *v.lock().unwrap());
 }
+
+/*
+Marker traits - fundamental to Rust's multithreading policies.
+send - A data type is safe to send (move) from one thread to another
+sync - The data type can be shared across threads without manual locks or mutex areas 
+*/
+
+use std::result::Result;
+pub fn add(a: i32, b: i32) -> Result<i32, String> {
+    let c = a + b;
+    println!("{:?}", &c);
+    Ok(c)
+    
+}
+
+/*
+Static and Dynamic 
+Rust dependencies have 2 types of linking -
+Static - Via the rlib format
+Dynamic - Via shared libraries (.so or .dll)
+For rust ideally dynamic linking is used for native dependencies, since they 
+are usually available, in the operating system, and don't need to be included
+in the package. Rust compiler favors this with a -C prefer-dynamic flag, which
+will get the compiler to look for the corresponding dynamic libraries first.
+*/
